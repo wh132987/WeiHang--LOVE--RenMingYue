@@ -1,0 +1,2209 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>小乖宝儿，元旦快乐！</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Ma+Shan+Zheng&family=ZCOOL+QingKe+HuangYou&family=Noto+Serif+SC:wght@400;700&family=Comic+Neue:wght@700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        /* 启动页面样式 - 全屏大红心 */
+        #startPage {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(135deg, #ffcfe0 0%, #ffb6d9 30%, #ff9bc9 70%, #ff7eb3 100%);
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            z-index: 10000;
+            text-align: center;
+            transition: opacity 0.8s ease;
+            cursor: pointer;
+        }
+
+        #startPage.fade-out {
+            opacity: 0;
+            pointer-events: none;
+        }
+
+        /* 修复的超大爱心样式 - 使用正确的CSS形状 */
+        .giant-heart-container {
+            position: relative;
+            width: 70vmin;
+            height: 70vmin;
+            max-width: 400px;
+            max-height: 400px;
+            min-width: 250px;
+            min-height: 250px;
+            cursor: pointer;
+            margin: 0 auto;
+        }
+
+        .giant-heart {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(45deg, #ff4081, #ff0066);
+            transform: rotate(45deg);
+            animation: giantHeartbeat 1.2s infinite alternate;
+            filter: drop-shadow(0 0 30px rgba(255, 64, 129, 0.5));
+            transition: all 0.3s ease;
+        }
+
+        /* 爱心形状 */
+        .giant-heart:before,
+        .giant-heart:after {
+            content: "";
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(45deg, #ff4081, #ff0066);
+            border-radius: 50%;
+        }
+
+        .giant-heart:before {
+            top: -50%;
+            left: 0;
+        }
+
+        .giant-heart:after {
+            top: 0;
+            left: -50%;
+        }
+
+        .giant-heart-container:hover .giant-heart {
+            transform: rotate(45deg) scale(1.05);
+            filter: drop-shadow(0 0 40px rgba(255, 64, 129, 0.7));
+        }
+
+        .giant-heart-container:active .giant-heart {
+            transform: rotate(45deg) scale(0.95);
+        }
+
+        /* 爱心内部高光 */
+        .giant-heart-inner {
+            position: absolute;
+            width: 70%;
+            height: 70%;
+            background: linear-gradient(45deg, rgba(255, 255, 255, 0.3), rgba(255, 255, 255, 0.1));
+            top: 15%;
+            left: 15%;
+            border-radius: 50%;
+            z-index: 1;
+        }
+
+        /* 点击提示 */
+        .click-instruction {
+            position: absolute;
+            bottom: 15%;
+            left: 50%;
+            transform: translateX(-50%);
+            font-size: 1.8rem;
+            color: white;
+            text-shadow: 2px 2px 10px rgba(255, 64, 129, 0.8);
+            font-family: 'Comic Neue', cursive;
+            font-weight: 700;
+            animation: pulseText 2s infinite;
+            white-space: nowrap;
+            background: rgba(255, 255, 255, 0.2);
+            padding: 15px 30px;
+            border-radius: 50px;
+            backdrop-filter: blur(5px);
+            border: 2px solid rgba(255, 255, 255, 0.3);
+            z-index: 2;
+        }
+
+        .click-instruction i {
+            margin-right: 10px;
+            animation: bounce 2s infinite;
+        }
+
+        /* 情侣名字在爱心上方 - 修改后的样式 */
+        .names-overlay {
+            position: absolute;
+            top: 15%;
+            left: 50%;
+            transform: translateX(-50%);
+            font-size: 3.5rem;
+            color: white;
+            text-shadow:
+                3px 3px 15px rgba(255, 64, 129, 0.9),
+                0 0 20px rgba(255, 0, 102, 0.7),
+                0 0 30px rgba(255, 0, 102, 0.5);
+            font-family: 'Comic Neue', cursive;
+            font-weight: 700;
+            z-index: 2;
+            white-space: nowrap;
+            /* 去掉背景框和边框 */
+            background: transparent;
+            padding: 0;
+            border-radius: 0;
+            backdrop-filter: none;
+            border: none;
+            /* 添加心跳动画 */
+            animation: namesHeartbeat 1.2s infinite alternate;
+        }
+
+        /* 使用Font Awesome爱心图标作为后备方案 */
+        .heart-icon {
+            color: #ff4081;
+            text-shadow:
+                0 0 10px rgba(255, 0, 102, 1),
+                0 0 20px rgba(255, 0, 102, 0.8),
+                0 0 30px rgba(255, 0, 102, 0.6);
+            display: inline-block;
+            animation: heartPulse 1.2s infinite alternate;
+            margin: 0 15px;
+            font-size: 3.5rem;
+        }
+
+        /* 动画定义 */
+        @keyframes giantHeartbeat {
+            0% {
+                transform: rotate(45deg) scale(1);
+                filter: drop-shadow(0 0 30px rgba(255, 64, 129, 0.5));
+            }
+            50% {
+                transform: rotate(45deg) scale(1.08);
+                filter: drop-shadow(0 0 50px rgba(255, 64, 129, 0.8));
+            }
+            100% {
+                transform: rotate(45deg) scale(1.05);
+                filter: drop-shadow(0 0 40px rgba(255, 64, 129, 0.6));
+            }
+        }
+
+        /* 名字心跳动画 */
+        @keyframes namesHeartbeat {
+            0% {
+                transform: translateX(-50%) scale(1);
+                text-shadow:
+                    3px 3px 15px rgba(255, 64, 129, 0.9),
+                    0 0 20px rgba(255, 0, 102, 0.7),
+                    0 0 30px rgba(255, 0, 102, 0.5);
+                color: white;
+            }
+            25% {
+                transform: translateX(-50%) scale(1.08);
+                text-shadow:
+                    3px 3px 20px rgba(255, 64, 129, 1),
+                    0 0 25px rgba(255, 0, 102, 0.9),
+                    0 0 35px rgba(255, 0, 102, 0.7);
+                color: #ffe6f2;
+            }
+            50% {
+                transform: translateX(-50%) scale(1.1);
+                text-shadow:
+                    3px 3px 25px rgba(255, 64, 129, 1),
+                    0 0 30px rgba(255, 0, 102, 1),
+                    0 0 40px rgba(255, 0, 102, 0.8);
+                color: #ffd9e6;
+            }
+            75% {
+                transform: translateX(-50%) scale(1.08);
+                text-shadow:
+                    3px 3px 20px rgba(255, 64, 129, 1),
+                    0 0 25px rgba(255, 0, 102, 0.9),
+                    0 0 35px rgba(255, 0, 102, 0.7);
+                color: #ffe6f2;
+            }
+            100% {
+                transform: translateX(-50%) scale(1.05);
+                text-shadow:
+                    3px 3px 15px rgba(255, 64, 129, 0.9),
+                    0 0 20px rgba(255, 0, 102, 0.7),
+                    0 0 30px rgba(255, 0, 102, 0.5);
+                color: white;
+            }
+        }
+
+        /* 单独爱心的脉冲动画 */
+        @keyframes heartPulse {
+            0% {
+                transform: scale(1);
+                text-shadow:
+                    0 0 10px rgba(255, 0, 102, 0.8),
+                    0 0 20px rgba(255, 0, 102, 0.6),
+                    0 0 30px rgba(255, 0, 102, 0.4);
+                color: #ff0066;
+            }
+            50% {
+                transform: scale(1.3);
+                text-shadow:
+                    0 0 15px rgba(255, 0, 102, 1),
+                    0 0 25px rgba(255, 0, 102, 0.8),
+                    0 0 35px rgba(255, 0, 102, 0.6);
+                color: #ff3385;
+            }
+            100% {
+                transform: scale(1.2);
+                text-shadow:
+                    0 0 12px rgba(255, 0, 102, 0.9),
+                    0 0 22px rgba(255, 0, 102, 0.7),
+                    0 0 32px rgba(255, 0, 102, 0.5);
+                color: #ff1a75;
+            }
+        }
+
+        @keyframes pulseText {
+            0%, 100% {
+                opacity: 0.9;
+                transform: translateX(-50%) scale(1);
+            }
+            50% {
+                opacity: 1;
+                transform: translateX(-50%) scale(1.05);
+            }
+        }
+
+        @keyframes bounce {
+            0%, 100% {
+                transform: translateY(0);
+            }
+            50% {
+                transform: translateY(-10px);
+            }
+        }
+
+        /* 启动页面中的飘落小爱心 */
+        .start-hearts-bg {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 1;
+            overflow: hidden;
+        }
+
+        .start-heart {
+            position: absolute;
+            opacity: 0;
+            z-index: 1;
+            animation: heart-fall linear infinite;
+            font-size: 2rem;
+            color: rgba(255, 255, 255, 0.7);
+            filter: drop-shadow(0 0 5px rgba(255, 64, 129, 0.5));
+        }
+
+        /* 原页面内容 - 默认隐藏 */
+        #mainContent {
+            display: none;
+        }
+
+        body {
+            font-family: 'Noto Serif SC', serif;
+            background: linear-gradient(135deg, #ffcfe0 0%, #ffb6d9 30%, #ff9bc9 70%, #ff7eb3 100%);
+            color: #8a2d5e;
+            min-height: 100vh;
+            overflow-x: hidden;
+            line-height: 1.8;
+            position: relative;
+        }
+
+        /* 飘落的爱心背景 - 更加漂亮 */
+        .hearts-bg {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 1;
+            overflow: hidden;
+        }
+
+        .heart {
+            position: absolute;
+            opacity: 0;
+            z-index: 1;
+            animation: heart-fall linear infinite;
+            filter: drop-shadow(0 0 5px rgba(255, 64, 129, 0.3));
+        }
+
+        /* 不同样式的爱心 */
+        .heart::before,
+        .heart::after {
+            content: '';
+            position: absolute;
+            left: 50px;
+            top: 0;
+            width: 50px;
+            height: 80px;
+            background: var(--heart-color, #ff4081);
+            border-radius: 50px 50px 0 0;
+            transform: rotate(-45deg);
+            transform-origin: 0 100%;
+        }
+
+        .heart::after {
+            left: 0;
+            transform: rotate(45deg);
+            transform-origin: 100% 100%;
+        }
+
+        /* 爱心动画 */
+        @keyframes heart-fall {
+            0% {
+                transform: translateY(-100px) rotate(0deg) scale(var(--heart-scale, 0.7));
+                opacity: 0;
+            }
+            10% {
+                opacity: var(--heart-opacity, 0.8);
+            }
+            90% {
+                opacity: var(--heart-opacity, 0.8);
+            }
+            100% {
+                transform: translateY(100vh) rotate(var(--heart-rotate, 360deg)) scale(var(--heart-scale, 0.7));
+                opacity: 0;
+            }
+        }
+
+        /* 响应式设计 */
+        @media (max-width: 768px) {
+            .giant-heart-container {
+                width: 60vmin;
+                height: 60vmin;
+                min-width: 200px;
+                min-height: 200px;
+            }
+
+            .names-overlay {
+                font-size: 2.5rem;
+                top: 10%;
+            }
+
+            .heart-icon {
+                font-size: 2.5rem;
+                margin: 0 10px;
+            }
+
+            .click-instruction {
+                font-size: 1.4rem;
+                padding: 12px 25px;
+                bottom: 10%;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .giant-heart-container {
+                width: 50vmin;
+                height: 50vmin;
+                min-width: 180px;
+                min-height: 180px;
+            }
+
+            .names-overlay {
+                font-size: 2rem;
+                top: 8%;
+            }
+
+            .heart-icon {
+                font-size: 2rem;
+                margin: 0 8px;
+            }
+
+            .click-instruction {
+                font-size: 1.2rem;
+                padding: 10px 20px;
+                bottom: 8%;
+            }
+        }
+
+        /* 以下是原有样式保持不变 */
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 2rem;
+            position: relative;
+            z-index: 2;
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 2rem;
+            padding: 2rem;
+            background: rgba(255, 255, 255, 0.2);
+            border-radius: 20px;
+            border: 2px solid rgba(255, 255, 255, 0.4);
+            box-shadow: 0 10px 30px rgba(255, 105, 180, 0.2);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .header::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 5px;
+            background: linear-gradient(90deg, #ff66a3, #ff99cc, #ff66a3);
+        }
+
+        .header h1 {
+            font-family: 'Ma Shan Zheng', cursive;
+            font-size: 3.5rem;
+            color: #d81b60;
+            margin-bottom: 1rem;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.1);
+        }
+
+        .date-badge {
+            display: inline-block;
+            background: linear-gradient(45deg, #ff4081, #ff79b0);
+            color: white;
+            font-weight: bold;
+            padding: 0.5rem 1.5rem;
+            border-radius: 50px;
+            font-size: 1.2rem;
+            margin-bottom: 1.5rem;
+            box-shadow: 0 5px 15px rgba(255, 64, 129, 0.3);
+            animation: heartbeat 1.5s infinite alternate;
+        }
+
+        .couple-names {
+            font-size: 3.2rem;
+            color: #ff4081;
+            margin-top: 1.5rem;
+            font-family: 'Comic Neue', cursive;
+            font-weight: 700;
+            text-shadow: 3px 3px 0px rgba(255, 182, 193, 0.6);
+            animation: coupleNamesAnimation 3s ease-in-out infinite alternate;
+            position: relative;
+            display: inline-block;
+            padding: 0.5rem 1.5rem;
+            background: rgba(255, 255, 255, 0.3);
+            border-radius: 20px;
+            box-shadow: 0 8px 25px rgba(255, 64, 129, 0.3);
+        }
+
+        @keyframes coupleNamesAnimation {
+            0% {
+                transform: scale(1) translateY(0);
+                text-shadow: 3px 3px 0px rgba(255, 182, 193, 0.6);
+                color: #ff4081;
+            }
+            25% {
+                transform: scale(1.05) translateY(-5px);
+                text-shadow: 5px 5px 0px rgba(255, 182, 193, 0.8);
+                color: #ff66a3;
+            }
+            50% {
+                transform: scale(1.1) translateY(-8px);
+                text-shadow: 7px 7px 0px rgba(255, 182, 193, 1);
+                color: #ff79b0;
+            }
+            75% {
+                transform: scale(1.05) translateY(-5px);
+                text-shadow: 5px 5px 0px rgba(255, 182, 193, 0.8);
+                color: #ff66a3;
+            }
+            100% {
+                transform: scale(1) translateY(0);
+                text-shadow: 3px 3px 0px rgba(255, 182, 193, 0.6);
+                color: #ff4081;
+            }
+        }
+
+        .couple-names::before,
+        .couple-names::after {
+            content: '💖';
+            position: absolute;
+            font-size: 2.5rem;
+            top: 50%;
+            transform: translateY(-50%);
+            animation: floatHeart 2s ease-in-out infinite alternate;
+        }
+
+        .couple-names::before {
+            left: -40px;
+            animation-delay: 0.5s;
+        }
+
+        .couple-names::after {
+            right: -40px;
+            animation-delay: 1s;
+        }
+
+        @keyframes floatHeart {
+            0% {
+                transform: translateY(-50%) scale(1) rotate(0deg);
+            }
+            100% {
+                transform: translateY(-50%) scale(1.2) rotate(10deg);
+            }
+        }
+
+        .main-content {
+            display: flex;
+            gap: 2rem;
+            margin-bottom: 2rem;
+        }
+
+        .left-column {
+            flex: 0 0 380px;
+        }
+
+        .photo-slider {
+            height: 100%;
+            background: rgba(255, 255, 255, 0.2);
+            border-radius: 20px;
+            padding: 1.5rem;
+            border: 2px solid rgba(255, 255, 255, 0.4);
+            box-shadow: 0 10px 30px rgba(255, 105, 180, 0.2);
+            position: relative;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .photo-slider::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 5px;
+            background: linear-gradient(90deg, #ff66a3, #ff99cc, #ff66a3);
+        }
+
+        .slider-title {
+            font-family: 'Ma Shan Zheng', cursive;
+            font-size: 1.8rem;
+            color: #d81b60;
+            margin-bottom: 1.5rem;
+            text-align: center;
+        }
+
+        .slider-container {
+            position: relative;
+            width: 100%;
+            height: 350px;
+            overflow: hidden;
+            border-radius: 15px;
+            box-shadow: 0 5px 20px rgba(255, 105, 180, 0.3);
+            flex-grow: 1;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: rgba(255, 255, 255, 0.3);
+        }
+
+        .slider-track {
+            display: flex;
+            width: 100%;
+            height: 100%;
+            transition: transform 0.5s ease-in-out;
+        }
+
+        .slide {
+            min-width: 100%;
+            height: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+        }
+
+        .slide-image {
+            max-width: 100%;
+            max-height: 100%;
+            object-fit: cover;
+            border-radius: 10px;
+        }
+
+        .slide-caption {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background: rgba(0, 0, 0, 0.5);
+            color: white;
+            padding: 8px;
+            text-align: center;
+            font-size: 0.9rem;
+            border-radius: 0 0 10px 10px;
+        }
+
+        .no-photos-message {
+            text-align: center;
+            color: #ff4081;
+            font-size: 1.3rem;
+            padding: 2rem;
+            font-family: 'Comic Neue', cursive;
+            font-weight: 700;
+        }
+
+        .no-photos-message i {
+            font-size: 3rem;
+            margin-bottom: 1rem;
+            display: block;
+            color: #ff79b0;
+            animation: cameraIcon 2s infinite alternate;
+        }
+
+        @keyframes cameraIcon {
+            0% {
+                transform: scale(1) rotate(0deg);
+            }
+            100% {
+                transform: scale(1.2) rotate(5deg);
+            }
+        }
+
+        .slider-controls {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 1.5rem;
+            margin-top: 1rem;
+        }
+
+        .slider-btn {
+            background: linear-gradient(45deg, #ff4081, #ff79b0);
+            color: white;
+            border: none;
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            cursor: pointer;
+            font-size: 1.2rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.3s;
+            box-shadow: 0 5px 15px rgba(255, 64, 129, 0.3);
+        }
+
+        .slider-btn:hover {
+            background: #d81b60;
+            transform: scale(1.1);
+        }
+
+        .upload-section {
+            margin-top: 1rem;
+            text-align: center;
+        }
+
+        .upload-btn {
+            background: #ff79b0;
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 25px;
+            cursor: pointer;
+            font-size: 1.1rem;
+            font-family: 'Comic Neue', cursive;
+            font-weight: 700;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            transition: all 0.3s;
+            box-shadow: 0 5px 15px rgba(255, 64, 129, 0.3);
+        }
+
+        .upload-btn:hover {
+            background: #ff66a3;
+            transform: translateY(-3px) scale(1.05);
+            box-shadow: 0 8px 20px rgba(255, 64, 129, 0.5);
+        }
+
+        .photo-input {
+            display: none;
+        }
+
+        .right-column {
+            flex: 1;
+        }
+
+        .love-letter-container {
+            height: 600px;
+            overflow: hidden;
+            background: rgba(255, 255, 255, 0.2);
+            border-radius: 20px;
+            padding: 2rem;
+            border: 2px solid rgba(255, 255, 255, 0.4);
+            box-shadow: 0 10px 30px rgba(255, 105, 180, 0.2);
+        }
+
+        .love-letter {
+            position: relative;
+            width: 100%;
+            padding: 1rem;
+            animation: scroll-text 180s linear infinite;
+        }
+
+        .salutation {
+            font-size: 1.8rem;
+            color: #d81b60;
+            margin-bottom: 2rem;
+            text-align: center;
+            font-weight: bold;
+        }
+
+        .content {
+            font-size: 1.4rem;
+            line-height: 2.2;
+            margin-bottom: 2rem;
+            text-align: justify;
+        }
+
+        .highlight-date {
+            color: #ff4081;
+            font-weight: bold;
+            background-color: rgba(255, 182, 193, 0.3);
+            padding: 0 5px;
+            border-radius: 5px;
+        }
+
+        .highlight-text {
+            color: #d81b60;
+            font-weight: bold;
+            font-size: 1.5rem;
+        }
+
+        .signature {
+            text-align: right;
+            font-size: 1.8rem;
+            color: #ff4081;
+            margin-top: 3rem;
+            font-family: 'ZCOOL QingKe HuangYou', cursive;
+        }
+
+        @keyframes scroll-text {
+            0% {
+                transform: translateY(0);
+            }
+            100% {
+                transform: translateY(-70%);
+            }
+        }
+
+        .controls {
+            display: flex;
+            justify-content: center;
+            gap: 2rem;
+            margin-top: 1.5rem;
+        }
+
+        .control-btn {
+            background: linear-gradient(45deg, #ff4081, #ff79b0);
+            color: white;
+            border: none;
+            padding: 0.8rem 1.5rem;
+            border-radius: 50px;
+            font-size: 1.2rem;
+            cursor: pointer;
+            transition: all 0.3s;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            box-shadow: 0 5px 15px rgba(255, 64, 129, 0.3);
+        }
+
+        .control-btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 20px rgba(255, 64, 129, 0.5);
+        }
+
+        .control-btn:active {
+            transform: translateY(0);
+        }
+
+        .timeline {
+            background: rgba(255, 255, 255, 0.2);
+            border-radius: 20px;
+            padding: 2rem;
+            margin-bottom: 2rem;
+            border: 2px solid rgba(255, 255, 255, 0.4);
+            box-shadow: 0 10px 30px rgba(255, 105, 180, 0.2);
+        }
+
+        .timeline-title {
+            font-family: 'Ma Shan Zheng', cursive;
+            font-size: 2.2rem;
+            color: #d81b60;
+            margin-bottom: 1.5rem;
+            text-align: center;
+        }
+
+        .timeline-items {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 2rem;
+        }
+
+        .timeline-item {
+            flex: 1;
+            min-width: 200px;
+            text-align: center;
+            padding: 1rem;
+            background: rgba(255, 255, 255, 0.3);
+            border-radius: 15px;
+            box-shadow: 0 5px 15px rgba(255, 105, 180, 0.2);
+            transition: transform 0.3s;
+        }
+
+        .timeline-item:hover {
+            transform: translateY(-5px);
+        }
+
+        .timeline-date {
+            font-weight: bold;
+            color: #ff4081;
+            font-size: 1.2rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .timeline-desc {
+            color: #8a2d5e;
+            font-size: 1rem;
+        }
+
+        .timeline-icon {
+            font-size: 2rem;
+            color: #ff79b0;
+            margin-bottom: 0.8rem;
+        }
+
+        .footer {
+            text-align: center;
+            padding: 2rem;
+            background: rgba(255, 255, 255, 0.2);
+            border-radius: 20px;
+            border: 2px solid rgba(255, 255, 255, 0.4);
+            box-shadow: 0 10px 30px rgba(255, 105, 180, 0.2);
+            color: #d81b60;
+        }
+
+        .footer p {
+            margin-bottom: 0.5rem;
+            font-size: 1.1rem;
+        }
+
+        .footer-heart {
+            color: #ff4081;
+            animation: heartbeat 1.5s infinite alternate;
+        }
+
+        .music-mini-player {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            z-index: 1000;
+        }
+
+        .mini-player-btn {
+            background: #ff4081;
+            color: white;
+            border: none;
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            cursor: pointer;
+            font-size: 1.5rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.3s;
+            box-shadow: 0 5px 15px rgba(255, 64, 129, 0.3);
+        }
+
+        .mini-player-btn:hover {
+            background: #d81b60;
+            transform: scale(1.1);
+            box-shadow: 0 8px 20px rgba(255, 64, 129, 0.5);
+        }
+
+        .music-player-panel {
+            position: absolute;
+            bottom: 70px;
+            right: 0;
+            background: rgba(255, 255, 255, 0.9);
+            border-radius: 15px;
+            padding: 15px;
+            box-shadow: 0 5px 20px rgba(255, 105, 180, 0.3);
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            min-width: 250px;
+            opacity: 0;
+            visibility: hidden;
+            transform: translateY(10px);
+            transition: all 0.3s ease;
+        }
+
+        .music-player-panel.show {
+            opacity: 1;
+            visibility: visible;
+            transform: translateY(0);
+        }
+
+        .music-controls {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .music-btn {
+            background: #ff4081;
+            color: white;
+            border: none;
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            cursor: pointer;
+            font-size: 1.2rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.3s;
+        }
+
+        .music-btn:hover {
+            background: #d81b60;
+            transform: scale(1.1);
+        }
+
+        .music-info {
+            font-size: 0.9rem;
+            color: #d81b60;
+            flex-grow: 1;
+        }
+
+        .volume-control {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            margin-top: 5px;
+        }
+
+        .volume-slider {
+            width: 100px;
+            height: 5px;
+            -webkit-appearance: none;
+            background: #ffb6c1;
+            border-radius: 5px;
+            outline: none;
+        }
+
+        .volume-slider::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            width: 12px;
+            height: 12px;
+            background: #ff4081;
+            border-radius: 50%;
+            cursor: pointer;
+        }
+
+        .file-selector {
+            display: flex;
+            flex-direction: column;
+            gap: 5px;
+            font-size: 0.8rem;
+            margin-top: 5px;
+        }
+
+        .file-input-label {
+            background: #ff79b0;
+            color: white;
+            padding: 5px 10px;
+            border-radius: 10px;
+            cursor: pointer;
+            text-align: center;
+            transition: all 0.3s;
+        }
+
+        .file-input-label:hover {
+            background: #ff66a3;
+        }
+
+        .file-input {
+            display: none;
+        }
+
+        .current-file {
+            font-size: 0.7rem;
+            color: #666;
+            margin-top: 5px;
+            word-break: break-all;
+        }
+
+        .clear-data-btn {
+            background: #ff6666;
+            color: white;
+            border: none;
+            padding: 5px 10px;
+            border-radius: 10px;
+            cursor: pointer;
+            font-size: 0.8rem;
+            margin-top: 5px;
+            transition: all 0.3s;
+        }
+
+        .clear-data-btn:hover {
+            background: #ff3333;
+            transform: translateY(-2px);
+        }
+    </style>
+</head>
+<body>
+    <!-- 启动页面 - 全屏大红心 -->
+    <div id="startPage">
+        <!-- 启动页面的飘落爱心 -->
+        <div class="start-hearts-bg" id="startHeartsBg"></div>
+
+        <!-- 情侣名字在爱心上方 - 修改后的结构 -->
+        <div class="names-overlay">
+            魏行 <i class="fas fa-heart heart-icon"></i> 任明月
+        </div>
+
+        <!-- 超大红心容器 -->
+        <div class="giant-heart-container" id="giantHeartContainer">
+            <div class="giant-heart">
+                <div class="giant-heart-inner"></div>
+            </div>
+        </div>
+
+        <!-- 点击提示 -->
+        <div class="click-instruction">
+            </i>点击红心开启浪漫之旅
+        </div>
+    </div>
+
+    <!-- 飘落的爱心背景 -->
+    <div class="hearts-bg" id="heartsBg"></div>
+
+    <!-- 音乐播放器 - 简洁隐藏版 -->
+    <div class="music-mini-player" id="musicMiniPlayer">
+        <button class="mini-player-btn" id="togglePlayerBtn">
+            <i class="fas fa-music"></i>
+        </button>
+        <div class="music-player-panel" id="musicPlayerPanel">
+            <div class="music-controls">
+                <button class="music-btn" id="playBtn">
+                    <i class="fas fa-pause"></i>
+                </button>
+                <div class="music-info" id="musicInfo">正在播放背景音乐</div>
+            </div>
+
+            <div class="volume-control">
+                <i class="fas fa-volume-up" id="volumeIcon"></i>
+                <input type="range" min="0" max="1" step="0.1" value="0.5" class="volume-slider" id="volumeSlider">
+            </div>
+
+            <div class="file-selector">
+                <label class="file-input-label">
+                    <i class="fas fa-music"></i> 选择其他音乐
+                    <input type="file" class="file-input" id="musicFileInput" accept="audio/*">
+                </label>
+                <div class="current-file" id="currentFileInfo">正在播放：新年快乐音乐</div>
+                <button class="clear-data-btn" id="clearMusicBtn">清除自定义音乐</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- 背景音乐元素 -->
+    <audio id="backgroundMusic" loop preload="auto">
+        <!-- 这里使用相对路径，请确保音乐文件名为 background-music.mp3 并放在同一目录 -->
+        <source src="background-music.mp3" type="audio/mpeg">
+        您的浏览器不支持音频元素。
+    </audio>
+
+    <!-- 主页面内容 -->
+    <div id="mainContent">
+        <div class="container">
+            <!-- 标题区域 -->
+            <header class="header">
+                <div class="date-badge">2025年12月31日</div>
+                <h1>小乖宝儿，元旦快乐！</h1>
+                <div class="couple-names">魏行❤任明月</div>
+            </header>
+
+            <!-- 主要内容区 - 并排布局 -->
+            <div class="main-content">
+                <!-- 左侧照片区域 -->
+                <div class="left-column">
+                    <section class="photo-slider">
+                        <h2 class="slider-title">我们的美好回忆</h2>
+                        <div class="slider-container" id="sliderContainer">
+                            <div class="slider-track" id="sliderTrack">
+                                <!-- 默认显示预加载图片 -->
+                                <div class="no-photos-message" id="loadingMessage">
+                                    <i class="fas fa-spinner fa-spin"></i>
+                                    <p>正在加载美好回忆...</p>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="slider-controls">
+                            <button class="slider-btn" id="prevBtn">
+                                <i class="fas fa-chevron-left"></i>
+                            </button>
+
+                            <button class="slider-btn" id="nextBtn">
+                                <i class="fas fa-chevron-right"></i>
+                            </button>
+                        </div>
+
+                        <div class="upload-section">
+
+                        </div>
+                    </section>
+                </div>
+
+                <!-- 右侧情书区域 -->
+                <div class="right-column">
+                    <div class="love-letter-container">
+                        <div class="love-letter" id="loveLetter">
+                            <div class="salutation">亲爱的小乖宝儿</div>
+
+                            <div class="content">
+                                <p>今天是2025年12月31日，是2025年的最后一天啦，首先要祝我滴小乖宝儿新年快乐，祝我滴小乖宝儿在新的一年里身体健康的，在学业上步步高升，在参加的比赛中都可以取得好的名次。</p>
+
+                                <p>宝儿，我滴小乖宝儿，这是我们俩在一起度过的第二个元旦，回想起来第一个元旦，我还记忆犹新嘞，去年元旦的零点，我们相互发送啦一条短信，那条短信我现在都还保留着嘞。</p>
+
+                                <p>小乖宝儿，此时此刻我的脑海中我们之间的点点滴滴犹如放电影一般在我的脑海中循环播放，<span class="highlight-date">2024年12月12日</span>，我们正式在一起，那一天我真的感觉好像是做梦一样，那一天我真的是<span class="highlight-text">超级超级超级超级超级开心，超级超级超级超级超级激动</span>，<span class="highlight-date">2025年3月8日</span>，这是我们第一次见面，<span class="highlight-date">2025年4月30日</span>，小乖宝儿来北京找我，这是我们第二次见面，<span class="highlight-date">2025年5月17日</span>，这是我们第三次见面，我们一起度过啦我们俩的第一个520，现在回想起来真的是<span class="highlight-text">超级超级超级超级超级开心</span>。<span class="highlight-date">2025年6月30日</span>，这是我们第四次见面，<span class="highlight-date">2025年9月30日</span>，这是我们第五次见面，这是我们俩第一次一起去旅行，去啦一个我们俩都没有去过的城市---开封，我们一起去了清明上河园，一起去了万岁山，小乖宝儿知道嘛，这个国庆节是我人生中所有度过的国庆节中最开心的国庆节，没有之一，是最开心的国庆节。<span class="highlight-date">2025年12月19日</span>，这是我们第六次见面，我们在一起一周年啦（12月12日，小乖宝儿要复习六级，然后我们就约定好啦这一天见面）。</p>
+
+                                <p>小乖宝儿，回想起来这一年，我们有过开心，有过难过，尽管有不开心的事情发生，但是我们没有分开，我们的心一直都坚定着在一起。</p>
+
+                                <p>小乖宝儿，这是我们一起度过的第二个元旦，我们还会有第三个，第四个，第五个等等等等很多很多个元旦，我心里面一直都是坚定着我滴小乖宝儿的，<span class="highlight-text">我一定要娶我的小乖宝儿</span>，这一天我相信一定会到来的，我和小乖宝儿说的话，我答应过小乖宝儿的事情，我心里面一直都记着嘞。</p>
+
+                                <p>宝儿，小乖宝儿，在以后的日子中，如果我有哪些地方做的不好啦，希望小乖宝儿可以和我说一下，我一定会立刻，马上就改正的。</p>
+
+                                <p>小乖宝儿知道吗，小乖宝儿早就已经融入到了我的生活中了，我每天都有想我滴小乖宝儿，每天都有想。和小乖宝儿在一起，我真的<span class="highlight-text">超级超级超级超级超级超级开心，超级超级超级超级超级高兴</span>，和小乖宝儿在一起，我真的好幸福好幸福。</p>
+
+                                <p>小乖宝儿，我真的<span class="highlight-text">好想好想好想</span>我的小乖宝儿，我真的好想现在就可以和小乖宝儿见面，小乖宝儿之前问有过我为什么老想着见面，小乖宝儿，小乖宝儿一直都在我的心里面，我怎么可能不想和我滴小乖宝儿见面呢吖。</p>
+
+                                <p>好几次晚上睡觉，我梦到小乖宝儿之后，然后突然醒来，看到小乖宝儿没有在我的身边，眼泪一下子就流下来了，我没有和小乖宝说，我害怕小乖宝儿说我矫情。</p>
+
+                                <p><span class="highlight-text">小乖宝儿，我一定会让我滴小乖宝儿成为最幸福的人！</span></p>
+
+                                <p>小乖宝儿，2026年已经来啦，在新的一年里，祝福我滴小乖宝儿身体健康，心想事成。<span class="highlight-text">爱迎万难</span>，小乖宝儿，我们一定会携手一直走下去的。</p>
+                            </div>
+
+                            <div class="signature">
+                                爱小乖宝儿的小宝儿<br>
+                                2025年12月31日
+                            </div>
+
+
+
+
+
+                            <!-- 添加空行确保滚动效果 -->
+                            <div style="height: 500px;"></div>
+                        </div>
+                    </div>
+
+                    <!-- 情书控制按钮 -->
+<!--                    <div class="controls">-->
+<!--                        <button class="control-btn" id="pauseBtn">-->
+<!--                            <i class="fas fa-pause"></i> 暂停滚动-->
+<!--                        </button>-->
+<!--                        <button class="control-btn" id="resumeBtn">-->
+<!--                            <i class="fas fa-play"></i> 继续滚动-->
+<!--                        </button>-->
+<!--                        <button class="control-btn" id="speedUpBtn">-->
+<!--                            <i class="fas fa-forward"></i> 加快速度-->
+<!--                        </button>-->
+<!--                        <button class="control-btn" id="slowDownBtn">-->
+<!--                            <i class="fas fa-backward"></i> 减慢速度-->
+<!--                        </button>-->
+<!--                    </div>-->
+                </div>
+            </div>
+
+            <!-- 时间线 -->
+            <section class="timeline">
+                <h2 class="timeline-title">我们的纪念日</h2>
+                <div class="timeline-items">
+                    <div class="timeline-item">
+                        <div class="timeline-icon">❤️</div>
+                        <div class="timeline-date">2024.12.12</div>
+                        <div class="timeline-desc">我们正式在一起</div>
+                    </div>
+                    <div class="timeline-item">
+                        <div class="timeline-icon">💑</div>
+                        <div class="timeline-date">2025.3.8</div>
+                        <div class="timeline-desc">第一次见面</div>
+                    </div>
+                    <div class="timeline-item">
+                        <div class="timeline-icon">🎉</div>
+                        <div class="timeline-date">2025.5.17</div>
+                        <div class="timeline-desc">一起过第一个520</div>
+                    </div>
+                    <div class="timeline-item">
+                        <div class="timeline-icon">✈️</div>
+                        <div class="timeline-date">2025.9.30</div>
+                        <div class="timeline-desc">第一次旅行(开封)</div>
+                    </div>
+                    <div class="timeline-item">
+                        <div class="timeline-icon">🎂</div>
+                        <div class="timeline-date">2025.12.12</div>
+                        <div class="timeline-desc">在一起一周年</div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- 页脚 -->
+            <footer class="footer">
+                <p>祝小乖宝儿元旦快乐！</p>
+                <p>愿我们的爱情如这飘落的爱心，美丽而永恒 <span class="footer-heart">❤️</span></p>
+                <p>爱迎万难，携手共度每一个春夏秋冬</p>
+            </footer>
+        </div>
+    </div>
+
+    <script>
+        // ================= 启动页面处理 =================
+        const startPage = document.getElementById('startPage');
+        const mainContent = document.getElementById('mainContent');
+        const giantHeartContainer = document.getElementById('giantHeartContainer');
+        const startHeartsBg = document.getElementById('startHeartsBg');
+        const backgroundMusic = document.getElementById('backgroundMusic');
+
+        // 创建启动页面的飘落爱心
+        function createStartHearts() {
+            // 爱心颜色数组
+            const heartColors = [
+                '#ff0000', // 纯红色
+    '#ff3333', // 亮红色
+    '#ff6666', // 浅红色
+    '#ff9999', // 淡红色
+    '#ffcccc'  // 极淡红色
+            ];
+
+            // 创建50个飘落爱心
+            for (let i = 0; i < 50; i++) {
+                const heart = document.createElement('div');
+                heart.className = 'start-heart';
+                // 使用Font Awesome的爱心图标
+                heart.innerHTML = '<i class="fas fa-heart"></i>';
+
+                // 随机颜色
+                const color = heartColors[Math.floor(Math.random() * heartColors.length)];
+                heart.style.color = color;
+
+                // 随机位置
+                const left = Math.random() * 100;
+                heart.style.left = `${left}%`;
+
+                // 随机大小
+                const size = 1 + Math.random() * 1.5; // 1-2.5rem
+                heart.style.fontSize = `${size}rem`;
+
+                // 随机动画参数
+                const duration = 15 + Math.random() * 15; // 15-30秒
+                const delay = Math.random() * 10; // 0-10秒延迟
+                const opacity = 0.3 + Math.random() * 0.5; // 0.3-0.8
+
+                heart.style.animationDuration = `${duration}s`;
+                heart.style.animationDelay = `${delay}s`;
+                heart.style.opacity = opacity;
+
+                startHeartsBg.appendChild(heart);
+            }
+        }
+
+        // 创建主页面的飘落爱心
+        function createHearts() {
+            const container = document.getElementById('heartsBg');
+
+            // 爱心颜色数组
+            const heartColors = [
+                '#ff0000', // 纯红色
+    '#ff3333', // 亮红色
+    '#ff6666', // 浅红色
+    '#ff9999', // 淡红色
+    '#ffcccc'  // 极淡红色
+            ];
+
+            // 爱心类型
+            const heartTypes = ['normal', 'sparkle', 'gradient', 'glow'];
+
+            // 创建100个爱心
+            for (let i = 0; i < 100; i++) {
+                const heart = document.createElement('div');
+                heart.className = 'heart';
+
+                // 随机选择爱心类型
+                const heartType = heartTypes[Math.floor(Math.random() * heartTypes.length)];
+                if (heartType !== 'normal') {
+                    heart.classList.add(`heart-${heartType}`);
+                }
+
+                // 随机选择爱心大小
+                const sizes = ['small', 'medium', 'large'];
+                const size = sizes[Math.floor(Math.random() * sizes.length)];
+                heart.classList.add(`heart-${size}`);
+
+                // 设置随机位置
+                const left = Math.random() * 100;
+                heart.style.left = `${left}%`;
+
+                // 设置随机颜色
+                const color = heartColors[Math.floor(Math.random() * heartColors.length)];
+                heart.style.setProperty('--heart-color', color);
+
+                // 随机动画参数
+                const scale = 0.5 + Math.random() * 0.5; // 0.5-1.0
+                const opacity = 0.4 + Math.random() * 0.4; // 0.4-0.8
+                const rotate = 360 + Math.random() * 360; // 360-720度
+                const duration = 15 + Math.random() * 15; // 15-30秒
+                const delay = Math.random() * 15; // 0-15秒延迟
+
+                // 应用动画属性
+                heart.style.setProperty('--heart-scale', scale);
+                heart.style.setProperty('--heart-opacity', opacity);
+                heart.style.setProperty('--heart-rotate', `${rotate}deg`);
+                heart.style.animationDuration = `${duration}s`;
+                heart.style.animationDelay = `${delay}s`;
+
+                container.appendChild(heart);
+            }
+        }
+
+        // 红心点击事件 - 整个启动页面都可点击
+        startPage.addEventListener('click', () => {
+            console.log('红心被点击，开始播放音乐...');
+
+            // 给红心添加点击效果
+            const giantHeart = giantHeartContainer.querySelector('.giant-heart');
+            giantHeart.style.animation = 'none';
+            giantHeart.style.transform = 'rotate(45deg) scale(0.9)';
+
+            setTimeout(() => {
+                giantHeart.style.animation = 'giantHeartbeat 1.2s infinite alternate';
+                giantHeart.style.transform = 'rotate(45deg) scale(1)';
+            }, 200);
+
+            // 1. 预加载音乐
+            backgroundMusic.load();
+
+            // 2. 尝试播放音乐
+            const playPromise = backgroundMusic.play();
+
+            if (playPromise !== undefined) {
+                playPromise.then(() => {
+                    console.log('音乐播放成功，显示主页面');
+                    showMainContent();
+                }).catch(error => {
+                    console.log('音乐播放失败，但继续显示主页面:', error);
+                    showMainContent();
+                });
+            } else {
+                console.log('没有播放promise，直接显示主页面');
+                showMainContent();
+            }
+        });
+
+        // 显示主页面
+        function showMainContent() {
+            // 淡出启动页面
+            startPage.classList.add('fade-out');
+
+            // 短暂延迟后隐藏启动页面并显示主页面
+            setTimeout(() => {
+                startPage.style.display = 'none';
+                mainContent.style.display = 'block';
+
+                // 初始化爱心背景
+                createHearts();
+
+                // 初始化其他功能
+                initSlider();
+                initializeMusicPlayer();
+
+                console.log('主页面已显示');
+            }, 800);
+        }
+
+        // ================= 音乐播放器功能 =================
+        let isPlaying = true;
+        let isMuted = false;
+        let customAudio = null;
+        let customAudioUrl = null;
+
+        // 音乐播放器控件
+        const togglePlayerBtn = document.getElementById('togglePlayerBtn');
+        const musicPlayerPanel = document.getElementById('musicPlayerPanel');
+        const playBtn = document.getElementById('playBtn');
+        const volumeSlider = document.getElementById('volumeSlider');
+        const volumeIcon = document.getElementById('volumeIcon');
+        const musicFileInput = document.getElementById('musicFileInput');
+        const musicInfo = document.getElementById('musicInfo');
+        const currentFileInfo = document.getElementById('currentFileInfo');
+        const clearMusicBtn = document.getElementById('clearMusicBtn');
+
+        // 本地存储键名
+        const STORAGE_KEYS = {
+            PHOTOS: 'newYearLoveLetter_photos',
+            MUSIC_INFO: 'newYearLoveLetter_musicInfo',
+            MUSIC_VOLUME: 'newYearLoveLetter_musicVolume',
+            MUSIC_MUTED: 'newYearLoveLetter_musicMuted'
+        };
+
+        // 初始化音乐播放器
+        function initializeMusicPlayer() {
+            console.log('初始化音乐播放器...');
+
+            // 恢复音量设置
+            const savedVolume = localStorage.getItem(STORAGE_KEYS.MUSIC_VOLUME);
+            const savedMuted = localStorage.getItem(STORAGE_KEYS.MUSIC_MUTED);
+
+            if (savedVolume) {
+                backgroundMusic.volume = parseFloat(savedVolume);
+                volumeSlider.value = savedVolume;
+            }
+
+            if (savedMuted === 'true') {
+                backgroundMusic.muted = true;
+                isMuted = true;
+                volumeIcon.className = 'fas fa-volume-mute';
+            }
+
+            // 检查是否有自定义音乐
+            const savedMusicInfo = localStorage.getItem(STORAGE_KEYS.MUSIC_INFO);
+            if (savedMusicInfo) {
+                try {
+                    const musicInfoData = JSON.parse(savedMusicInfo);
+                    musicInfo.textContent = `已保存: ${musicInfoData.name}`;
+                    currentFileInfo.textContent = `已保存: ${musicInfoData.name}`;
+                } catch (error) {
+                    console.error('加载自定义音乐信息时出错:', error);
+                }
+            }
+
+            // 设置播放器初始状态
+            playBtn.innerHTML = '<i class="fas fa-pause"></i>';
+        }
+
+        // ================= 事件监听器 =================
+        // 切换音乐面板显示
+        togglePlayerBtn.addEventListener('click', (e) => {
+            e.stopPropagation();
+            musicPlayerPanel.classList.toggle('show');
+        });
+
+        // 点击页面其他地方关闭音乐面板
+        document.addEventListener('click', (e) => {
+            if (!musicPlayerPanel.contains(e.target) && !togglePlayerBtn.contains(e.target)) {
+                musicPlayerPanel.classList.remove('show');
+            }
+        });
+
+        // 播放/暂停音乐
+        playBtn.addEventListener('click', () => {
+            if (customAudio) {
+                if (isPlaying) {
+                    customAudio.pause();
+                    playBtn.innerHTML = '<i class="fas fa-play"></i>';
+                    isPlaying = false;
+                } else {
+                    customAudio.play();
+                    playBtn.innerHTML = '<i class="fas fa-pause"></i>';
+                    isPlaying = true;
+                }
+            } else {
+                if (isPlaying) {
+                    backgroundMusic.pause();
+                    playBtn.innerHTML = '<i class="fas fa-play"></i>';
+                    isPlaying = false;
+                } else {
+                    backgroundMusic.play();
+                    playBtn.innerHTML = '<i class="fas fa-pause"></i>';
+                    isPlaying = true;
+                }
+            }
+        });
+
+        // 音量控制
+        volumeSlider.addEventListener('input', (e) => {
+            const volume = e.target.value;
+
+            if (customAudio) {
+                customAudio.volume = volume;
+            } else {
+                backgroundMusic.volume = volume;
+            }
+
+            // 更新音量图标
+            if (volume == 0) {
+                volumeIcon.className = 'fas fa-volume-mute';
+            } else if (volume < 0.5) {
+                volumeIcon.className = 'fas fa-volume-down';
+            } else {
+                volumeIcon.className = 'fas fa-volume-up';
+            }
+
+            localStorage.setItem(STORAGE_KEYS.MUSIC_VOLUME, volume);
+        });
+
+        // 清除自定义音乐数据
+        clearMusicBtn.addEventListener('click', () => {
+            if (confirm('确定要清除自定义音乐数据吗？清除后将恢复默认背景音乐。')) {
+                localStorage.removeItem(STORAGE_KEYS.MUSIC_INFO);
+
+                if (customAudio) {
+                    customAudio.pause();
+                    customAudio = null;
+                }
+
+                if (customAudioUrl) {
+                    URL.revokeObjectURL(customAudioUrl);
+                    customAudioUrl = null;
+                }
+
+                currentFileInfo.textContent = '正在播放：新年快乐音乐';
+                musicInfo.textContent = '正在播放背景音乐';
+
+                backgroundMusic.play();
+                isPlaying = true;
+                playBtn.innerHTML = '<i class="fas fa-pause"></i>';
+
+                alert('自定义音乐数据已清除');
+            }
+        });
+
+        // 选择自定义音乐文件
+        musicFileInput.addEventListener('change', (e) => {
+            const file = e.target.files[0];
+            if (file) {
+                if (!file.type.startsWith('audio/')) {
+                    alert('请选择音频文件');
+                    return;
+                }
+
+                currentFileInfo.textContent = `正在加载: ${file.name}`;
+                musicInfo.textContent = `正在加载: ${file.name}`;
+
+                if (customAudio) {
+                    customAudio.pause();
+                    customAudio = null;
+                }
+
+                if (customAudioUrl) {
+                    URL.revokeObjectURL(customAudioUrl);
+                }
+
+                customAudioUrl = URL.createObjectURL(file);
+
+                customAudio = new Audio(customAudioUrl);
+                customAudio.volume = volumeSlider.value;
+                customAudio.loop = true;
+
+                localStorage.setItem(STORAGE_KEYS.MUSIC_INFO, JSON.stringify({
+                    name: file.name,
+                    type: file.type,
+                    lastModified: file.lastModified
+                }));
+
+                customAudio.addEventListener('loadeddata', () => {
+                    musicInfo.textContent = `正在播放: ${file.name}`;
+                    currentFileInfo.textContent = `正在播放: ${file.name}`;
+
+                    backgroundMusic.pause();
+
+                    customAudio.play();
+                    isPlaying = true;
+                    playBtn.innerHTML = '<i class="fas fa-pause"></i>';
+
+                    console.log('自定义音乐开始播放');
+                });
+
+                customAudio.addEventListener('ended', () => {
+                    customAudio.currentTime = 0;
+                    customAudio.play();
+                });
+
+                customAudio.addEventListener('error', (err) => {
+                    console.error('自定义音乐播放错误:', err);
+                    musicInfo.textContent = '播放出错，请选择其他文件';
+                    currentFileInfo.textContent = '文件播放错误';
+                });
+            }
+        });
+
+        // ================= 照片轮播功能 =================
+        const sliderTrack = document.getElementById('sliderTrack');
+        const prevBtn = document.getElementById('prevBtn');
+        const nextBtn = document.getElementById('nextBtn');
+        const uploadPhotoBtn = document.getElementById('uploadPhotoBtn');
+        const photoInput = document.getElementById('photoInput');
+        const clearPhotosBtn = document.getElementById('clearPhotosBtn');
+        const sliderContainer = document.getElementById('sliderContainer');
+        const loadingMessage = document.getElementById('loadingMessage');
+
+        let currentSlide = 0;
+        let slides = [];
+        let hasPhotos = false;
+        let autoSlideInterval = null;
+
+        // ================= 修改这里：设置您自己的照片 =================
+        // 请将下面的照片URL替换成您自己的照片
+        // 您可以将照片上传到GitHub仓库，然后使用相对路径或绝对URL
+        const myPhotos = [
+            {
+                url: 'photo1.jpg', // 改为您第一张照片的文件名
+                // caption: '我们的美好回忆1'
+            },
+            {
+                url: 'photo2.JPG', // 改为您第二张照片的文件名
+                // caption: '我们的美好回忆2'
+            },
+            {
+                url: 'photo3.JPG', // 改为您第三张照片的文件名
+                // caption: '我们的美好回忆3'
+            },
+            {
+                url: 'photo5.JPG', // 改为您第四张照片的文件名
+                // caption: '我们的美好回忆4'
+            },
+            {
+                url: 'photo6.JPG', // 改为您第四张照片的文件名
+                // caption: '我们的美好回忆4'
+            },
+            {
+                url: 'photo7.JPG', // 改为您第四张照片的文件名
+                // caption: '我们的美好回忆4'
+            },
+            {
+                url: 'photo8.JPG', // 改为您第四张照片的文件名
+                // caption: '我们的美好回忆4'
+            },
+            {
+                url: 'photo9.JPG', // 改为您第四张照片的文件名
+                // caption: '我们的美好回忆4'
+            },
+            {
+                url: 'photo10.JPG', // 改为您第四张照片的文件名
+                // caption: '我们的美好回忆4'
+            },
+
+
+            {
+                url: 'photo11.JPG', // 改为您第一张照片的文件名
+                // caption: '我们的美好回忆1'
+            },
+            {
+                url: 'photo12.JPG ',//改为您第二张照片的文件名
+                // caption: '我们的美好回忆2'
+            },
+            {
+                url: 'photo13.JPG', // 改为您第三张照片的文件名
+                // caption: '我们的美好回忆3'
+            },
+            {
+                url: 'photo14.JPG', // 改为您第四张照片的文件名
+                // caption: '我们的美好回忆4'
+            },
+            {
+                url: 'photo15.JPG', // 改为您第四张照片的文件名
+                // caption: '我们的美好回忆4'
+            },
+            {
+                url: 'photo16.JPG', // 改为您第四张照片的文件名
+                // caption: '我们的美好回忆4'
+            },
+            {
+                url: 'photo17.JPG', // 改为您第四张照片的文件名
+                // caption: '我们的美好回忆4'
+            },
+            {
+                url: 'photo18.JPG', // 改为您第四张照片的文件名
+                // caption: '我们的美好回忆4'
+            },
+            {
+                url: 'photo19.JPG', // 改为您第四张照片的文件名
+                // caption: '我们的美好回忆4'
+            },
+
+            {
+                url: 'photo20.JPG', // 改为您第一张照片的文件名
+                // caption: '我们的美好回忆1'
+            },
+            {
+                url: 'photo21.JPG ',//改为您第二张照片的文件名
+                // caption: '我们的美好回忆2'
+            },
+            {
+                url: 'photo22.JPG', // 改为您第三张照片的文件名
+                // caption: '我们的美好回忆3'
+            },
+            {
+                url: 'photo23.JPG', // 改为您第四张照片的文件名
+                // caption: '我们的美好回忆4'
+            },
+            {
+                url: 'photo24.JPG', // 改为您第四张照片的文件名
+                // caption: '我们的美好回忆4'
+            },
+            {
+                url: 'photo25.JPG', // 改为您第四张照片的文件名
+                // caption: '我们的美好回忆4'
+            },
+            {
+                url: 'photo26.JPG', // 改为您第四张照片的文件名
+                // caption: '我们的美好回忆4'
+            },
+            {
+                url: 'photo27.JPG', // 改为您第四张照片的文件名
+                // caption: '我们的美好回忆4'
+            },
+            {
+                url: 'photo28.JPG', // 改为您第四张照片的文件名
+                // caption: '我们的美好回忆4'
+            },
+
+            {
+                url: 'photo29.JPG', // 改为您第一张照片的文件名
+                // caption: '我们的美好回忆1'
+            },
+            {
+                url: 'photo30.JPG ',//改为您第二张照片的文件名
+                // caption: '我们的美好回忆2'
+            },
+            {
+                url: 'photo31.JPG', // 改为您第三张照片的文件名
+                // caption: '我们的美好回忆3'
+            },
+            {
+                url: 'photo32.JPG', // 改为您第四张照片的文件名
+                // caption: '我们的美好回忆4'
+            },
+            {
+                url: 'photo33.JPG', // 改为您第四张照片的文件名
+                // caption: '我们的美好回忆4'
+            },
+            {
+                url: 'photo34.JPG', // 改为您第四张照片的文件名
+                // caption: '我们的美好回忆4'
+            },
+            {
+                url: 'photo35.JPG', // 改为您第四张照片的文件名
+                // caption: '我们的美好回忆4'
+            },
+            {
+                url: 'photo36.JPG', // 改为您第四张照片的文件名
+                // caption: '我们的美好回忆4'
+            },
+            {
+                url: 'photo37.JPG', // 改为您第四张照片的文件名
+                // caption: '我们的美好回忆4'
+            },
+
+            {
+                url: 'photo38.JPG', // 改为您第一张照片的文件名
+                // caption: '我们的美好回忆1'
+            },
+            {
+                url: 'photo39.JPG ',//改为您第二张照片的文件名
+                // caption: '我们的美好回忆2'
+            },
+            {
+                url: 'photo40.JPG', // 改为您第三张照片的文件名
+                // caption: '我们的美好回忆3'
+            },
+            {
+                url: 'photo41.JPG', // 改为您第四张照片的文件名
+                // caption: '我们的美好回忆4'
+            },
+            {
+                url: 'photo42.JPG', // 改为您第四张照片的文件名
+                // caption: '我们的美好回忆4'
+            },
+            {
+                url: 'photo43.JPG', // 改为您第四张照片的文件名
+                // caption: '我们的美好回忆4'
+            },
+            {
+                url: 'photo44.JPG', // 改为您第四张照片的文件名
+                // caption: '我们的美好回忆4'
+            },
+            {
+                url: 'photo45.JPG', // 改为您第四张照片的文件名
+                // caption: '我们的美好回忆4'
+            },
+
+            // 您可以继续添加更多照片...
+            // {
+            //     url: 'photo5.jpg',
+            //     caption: '我们的美好回忆5'
+            // },
+            // {
+            //     url: 'photo6.jpg',
+            //     caption: '我们的美好回忆6'
+            // }
+        ];
+        // ================= 以上是需要修改的部分 =================
+
+        // 初始化轮播
+        function initSlider() {
+            sliderTrack.innerHTML = '';
+            slides = [];
+            hasPhotos = false;
+
+            // 检查是否有保存的用户上传照片
+            // const savedPhotos = localStorage.getItem(STORAGE_KEYS.PHOTOS);
+            // if (savedPhotos) {
+            //     try {
+            //         const photoData = JSON.parse(savedPhotos);
+            //         if (photoData.length > 0) {
+            //             hasPhotos = true;
+            //             photoData.forEach((photo, index) => {
+            //                 const slide = createSlide(photo.data, `上传的照片 ${index + 1}`);
+            //                 sliderTrack.appendChild(slide);
+            //                 slides.push(slide);
+            //             });
+            //
+            //             document.querySelector('.slider-controls').style.display = 'flex';
+            //             currentSlide = 0;
+            //             updateSlider();
+            //             startAutoSlide();
+            //             return; // 如果用户有上传的照片，优先显示这些
+            //         }
+            //     } catch (error) {
+            //         console.error('加载保存的照片时出错:', error);
+            //     }
+            // }
+
+            // 如果没有用户上传的照片，加载您的自定义照片
+            loadCustomPhotos();
+        }
+
+        // 加载您的自定义照片
+        function loadCustomPhotos() {
+            console.log('加载自定义照片...');
+
+            // 检查第一张照片是否能加载
+            if (myPhotos.length === 0) {
+                displayNoPhotosMessage();
+                return;
+            }
+
+            const testImage = new Image();
+            testImage.onload = function() {
+                // 如果第一张照片能加载，显示所有照片
+                displayCustomPhotos();
+            };
+
+            testImage.onerror = function() {
+                // 如果照片无法加载，尝试其他照片或显示提示
+                tryAlternativePhotos();
+            };
+
+            testImage.src = myPhotos[0].url;
+        }
+
+        // 尝试加载其他照片
+        function tryAlternativePhotos() {
+            console.log('尝试加载其他照片...');
+
+            // 尝试从1开始加载其他照片
+            let loaded = false;
+            for (let i = 1; i < myPhotos.length; i++) {
+                const testImage = new Image();
+                testImage.onload = function() {
+                    if (!loaded) {
+                        loaded = true;
+                        displayCustomPhotos();
+                    }
+                };
+                testImage.src = myPhotos[i].url;
+            }
+
+            // 设置超时，如果所有照片都无法加载，显示提示
+            setTimeout(() => {
+                if (!loaded) {
+                    displayPhotoHelpMessage();
+                }
+            }, 2000);
+        }
+
+        // 显示您的自定义照片
+        function displayCustomPhotos() {
+            sliderTrack.innerHTML = '';
+            slides = [];
+            hasPhotos = true;
+
+            myPhotos.forEach((photo, index) => {
+                const slide = createSlide(photo.url, photo.caption);
+                sliderTrack.appendChild(slide);
+                slides.push(slide);
+            });
+
+            document.querySelector('.slider-controls').style.display = 'flex';
+            currentSlide = 0;
+            updateSlider();
+            startAutoSlide();
+        }
+
+        // 显示照片帮助信息
+        function displayPhotoHelpMessage() {
+            sliderTrack.innerHTML = '';
+            const messageDiv = document.createElement('div');
+            messageDiv.className = 'no-photos-message';
+            messageDiv.innerHTML = '<i class="fas fa-images"></i><p>请将您的照片命名为：</p><p style="font-size: 1rem; margin: 5px 0;">photo1.jpg, photo2.jpg, photo3.jpg...</p><p style="font-size: 0.9rem; margin-top: 10px;">并与本网页放在同一目录下</p>';
+            sliderTrack.appendChild(messageDiv);
+
+            document.querySelector('.slider-controls').style.display = 'none';
+            hasPhotos = false;
+        }
+
+        // 显示没有照片的消息
+        function displayNoPhotosMessage() {
+            sliderTrack.innerHTML = '';
+            const messageDiv = document.createElement('div');
+            messageDiv.className = 'no-photos-message';
+            messageDiv.innerHTML = '<i class="fas fa-camera"></i><p>还没有照片，点击下方按钮上传</p>';
+            sliderTrack.appendChild(messageDiv);
+
+            document.querySelector('.slider-controls').style.display = 'none';
+            hasPhotos = false;
+        }
+
+        // 创建幻灯片
+        function createSlide(imageSrc, captionText) {
+            const slide = document.createElement('div');
+            slide.className = 'slide';
+
+            const imgElement = document.createElement('img');
+            imgElement.src = imageSrc;
+            imgElement.alt = captionText;
+            imgElement.className = 'slide-image';
+            imgElement.onerror = function() {
+                // 如果图片加载失败，显示占位符
+                this.src = 'data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="400" height="300" viewBox="0 0 400 300"><rect width="400" height="300" fill="%23ffcfe0"/><text x="200" y="150" font-family="Arial" font-size="20" text-anchor="middle" fill="%23ff4081">照片加载中...</text></svg>';
+            };
+
+            const caption = document.createElement('div');
+            caption.className = 'slide-caption';
+            caption.textContent = captionText;
+
+            slide.appendChild(imgElement);
+            slide.appendChild(caption);
+
+            return slide;
+        }
+
+        // 更新轮播位置
+        function updateSlider() {
+            sliderTrack.style.transform = `translateX(-${currentSlide * 100}%)`;
+        }
+
+        // 开始自动轮播
+        function startAutoSlide() {
+            if (autoSlideInterval) {
+                clearInterval(autoSlideInterval);
+            }
+
+            if (slides.length > 0) {
+                autoSlideInterval = setInterval(() => {
+                    currentSlide++;
+                    if (currentSlide >= slides.length) {
+                        currentSlide = 0;
+                    }
+                    updateSlider();
+                }, 5000);
+            }
+        }
+
+        // 停止自动轮播
+        function stopAutoSlide() {
+            if (autoSlideInterval) {
+                clearInterval(autoSlideInterval);
+                autoSlideInterval = null;
+            }
+        }
+
+        // 上一张照片
+        prevBtn.addEventListener('click', () => {
+            if (slides.length === 0) return;
+
+            stopAutoSlide();
+            currentSlide--;
+            if (currentSlide < 0) {
+                currentSlide = slides.length - 1;
+            }
+            updateSlider();
+            startAutoSlide();
+        });
+
+        // 下一张照片
+        nextBtn.addEventListener('click', () => {
+            if (slides.length === 0) return;
+
+            stopAutoSlide();
+            currentSlide++;
+            if (currentSlide >= slides.length) {
+                currentSlide = 0;
+            }
+            updateSlider();
+            startAutoSlide();
+        });
+
+        // 清除所有照片
+        clearPhotosBtn.addEventListener('click', () => {
+            if (slides.length === 0) {
+                alert('当前没有照片可以清除');
+                return;
+            }
+
+            if (confirm('确定要清除所有上传的照片吗？这个操作无法撤销。')) {
+                localStorage.removeItem(STORAGE_KEYS.PHOTOS);
+
+                stopAutoSlide();
+
+                // 重新初始化，会显示您的自定义照片
+                initSlider();
+
+                alert('所有上传的照片已清除，已恢复默认照片');
+            }
+        });
+
+        // 上传照片
+        uploadPhotoBtn.addEventListener('click', () => {
+            photoInput.click();
+        });
+
+        photoInput.addEventListener('change', (e) => {
+            const files = Array.from(e.target.files);
+
+            if (files.length > 0) {
+                let savedPhotos = [];
+                const savedData = localStorage.getItem(STORAGE_KEYS.PHOTOS);
+                if (savedData) {
+                    try {
+                        savedPhotos = JSON.parse(savedData);
+                    } catch (error) {
+                        console.error('解析保存的照片数据时出错:', error);
+                        savedPhotos = [];
+                    }
+                }
+
+                let newPhotosCount = 0;
+                let processedCount = 0;
+
+                files.forEach(file => {
+                    if (!file.type.startsWith('image/')) {
+                        alert(`文件 "${file.name}" 不是图片格式，已跳过`);
+                        processedCount++;
+                        return;
+                    }
+
+                    const reader = new FileReader();
+                    reader.onload = function(e) {
+                        savedPhotos.push({
+                            name: file.name,
+                            type: file.type,
+                            data: e.target.result
+                        });
+
+                        if (!hasPhotos) {
+                            sliderTrack.innerHTML = '';
+                            slides = [];
+                            hasPhotos = true;
+                            document.querySelector('.slider-controls').style.display = 'flex';
+                        }
+
+                        const slide = createSlide(e.target.result, file.name);
+                        sliderTrack.appendChild(slide);
+                        slides.push(slide);
+
+                        newPhotosCount++;
+                        processedCount++;
+
+                        if (slides.length === 1) {
+                            currentSlide = 0;
+                            updateSlider();
+                            startAutoSlide();
+                        }
+
+                        localStorage.setItem(STORAGE_KEYS.PHOTOS, JSON.stringify(savedPhotos));
+
+                        if (processedCount === files.length) {
+                            alert(`成功上传了 ${newPhotosCount} 张照片！`);
+                        }
+                    };
+                    reader.readAsDataURL(file);
+                });
+
+                photoInput.value = '';
+            }
+        });
+
+        // ================= 情书滚动控制 =================
+        const loveLetter = document.getElementById('loveLetter');
+        const pauseBtn = document.getElementById('pauseBtn');
+        const resumeBtn = document.getElementById('resumeBtn');
+        const speedUpBtn = document.getElementById('speedUpBtn');
+        const slowDownBtn = document.getElementById('slowDownBtn');
+
+        let isPaused = false;
+        let scrollSpeed = 180;
+
+        // 暂停滚动
+        pauseBtn.addEventListener('click', () => {
+            loveLetter.style.animationPlayState = 'paused';
+            isPaused = true;
+        });
+
+        // 继续滚动
+        resumeBtn.addEventListener('click', () => {
+            loveLetter.style.animationPlayState = 'running';
+            isPaused = false;
+        });
+
+        // 加快速度
+        speedUpBtn.addEventListener('click', () => {
+            scrollSpeed = Math.max(30, scrollSpeed - 30);
+            loveLetter.style.animationDuration = `${scrollSpeed}s`;
+        });
+
+        // 减慢速度
+        slowDownBtn.addEventListener('click', () => {
+            scrollSpeed = Math.min(300, scrollSpeed + 30);
+            loveLetter.style.animationDuration = `${scrollSpeed}s`;
+        });
+
+        // ================= 页面初始化 =================
+        window.addEventListener('load', () => {
+            console.log('元旦情书页面已加载完成！');
+
+            // 初始化启动页面的飘落爱心
+            createStartHearts();
+
+            console.log('等待用户点击红心...');
+
+            // 为触摸设备添加触摸事件
+            startPage.addEventListener('touchstart', function(e) {
+                e.preventDefault();
+                const giantHeart = giantHeartContainer.querySelector('.giant-heart');
+                giantHeart.style.transform = 'rotate(45deg) scale(0.95)';
+            }, { passive: false });
+
+            startPage.addEventListener('touchend', function(e) {
+                e.preventDefault();
+                const giantHeart = giantHeartContainer.querySelector('.giant-heart');
+                giantHeart.style.transform = 'rotate(45deg) scale(1)';
+            }, { passive: false });
+        });
+    </script>
+</body>
+</html>
